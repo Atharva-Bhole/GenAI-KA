@@ -1,10 +1,10 @@
 import React from 'react';
 import {
-  SlidersHorizontal,
+  ChevronRight,
   Compass,
   Cpu,
   Layers,
-  ChevronRight
+  SlidersHorizontal,
 } from 'lucide-react';
 import { KnowledgeSpace } from '../../types';
 
@@ -31,13 +31,10 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleResearchMode,
   citationsCount,
   onToggleDrawer,
-  drawerOpen
+  drawerOpen,
 }) => {
-  const currentSpaceObj = spaces.find(s => s.id === activeSpace) || spaces[0];
-
   return (
     <header className="h-14 border-b border-slate-800 bg-slate-900/60 backdrop-blur px-5 flex items-center justify-between select-none">
-      {/* Left: Breadcrumbs & Space Indicator */}
       <div className="flex items-center space-x-2 text-xs">
         <span className="text-slate-400 font-medium flex items-center gap-1.5">
           <Layers className="h-3.5 w-3.5 text-teal-400" />
@@ -57,9 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
         </select>
       </div>
 
-      {/* Right: Controls & Provenance Drawer Trigger */}
       <div className="flex items-center space-x-3">
-        {/* Strategy Selector */}
         <div className="flex items-center bg-slate-800/80 border border-slate-700 rounded-lg p-0.5 text-xs">
           <span className="text-[11px] text-slate-400 px-2 flex items-center gap-1">
             <Cpu className="h-3 w-3 text-slate-400" />
@@ -72,7 +67,6 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-teal-500 text-slate-950 font-semibold shadow-sm'
                 : 'text-slate-300 hover:text-white'
             }`}
-            title="Combines Dense Vector, BM25, Knowledge Graph, Authority & Freshness Ranking"
           >
             Adaptive Intelligence
           </button>
@@ -83,7 +77,6 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-slate-700 text-white font-semibold'
                 : 'text-slate-400 hover:text-white'
             }`}
-            title="Vector + BM25 keyword matching"
           >
             Hybrid RAG
           </button>
@@ -94,13 +87,11 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-slate-700 text-white font-semibold'
                 : 'text-slate-400 hover:text-white'
             }`}
-            title="Standard single-vector dense similarity"
           >
             Naive Vector RAG
           </button>
         </div>
 
-        {/* Research Mode Toggle */}
         <button
           onClick={() => onToggleResearchMode(!researchMode)}
           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all ${
@@ -108,7 +99,6 @@ export const Header: React.FC<HeaderProps> = ({
               ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-300 shadow-sm shadow-indigo-500/10'
               : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
           }`}
-          title="Decomposes complex inquiries across multiple policies and produces cross-document synthesis"
         >
           <Compass className={`h-3.5 w-3.5 ${researchMode ? 'text-indigo-400 animate-spin-slow' : 'text-slate-400'}`} />
           <span>Research Mode</span>
@@ -117,7 +107,6 @@ export const Header: React.FC<HeaderProps> = ({
           </span>
         </button>
 
-        {/* Provenance Drawer Toggle Button */}
         <button
           onClick={onToggleDrawer}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${

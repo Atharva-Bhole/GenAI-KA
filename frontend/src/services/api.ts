@@ -1,11 +1,11 @@
 import type {
-  QueryResponse,
-  Document,
-  KnowledgeSpace,
-  KnowledgeGraphData,
-  KnowledgeGapRecord,
   AnalyticsStats,
-  BenchmarkRunResponse
+  BenchmarkRunResponse,
+  Document,
+  KnowledgeGapRecord,
+  KnowledgeGraphData,
+  KnowledgeSpace,
+  QueryResponse,
 } from '../types';
 
 const API_BASE = 'http://127.0.0.1:8000/api/v1';

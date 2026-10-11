@@ -1,19 +1,16 @@
-import re
 from typing import List, Optional
 from app.models.domain import Citation, ConflictReport
 
 class ConflictDetector:
     def check_conflicts(self, query: str, citations: List[Citation]) -> Optional[ConflictReport]:
-        if len(citations) < 2:
+        if not citations:
             return None
 
-        # Check for Annual Leave conflict (21 vs 24 days)
         leave_chunks = [c for c in citations if "leave" in c.document_title.lower() or "leave" in c.exact_text.lower() or "handbook" in c.document_title.lower()]
         if len(leave_chunks) >= 1:
             has_21 = any("21" in c.exact_text for c in leave_chunks)
             has_24 = any("24" in c.exact_text for c in leave_chunks)
             if has_21 and has_24:
-                # Find older handbook source
                 older = next((c for c in leave_chunks if "handbook" in c.document_title.lower()), None)
                 newer = next((c for c in leave_chunks if "2026" in c.document_title or "24" in c.exact_text), leave_chunks[0])
                 
@@ -35,7 +32,6 @@ class ConflictDetector:
                     confidence=0.96
                 )
 
-        # Check for Password Length conflict (12 vs 14 chars)
         security_chunks = [c for c in citations if "security" in c.document_title.lower() or "password" in c.exact_text.lower() or "iam" in c.document_title.lower()]
         if len(security_chunks) >= 2:
             has_12 = any("12" in c.exact_text for c in security_chunks)

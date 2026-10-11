@@ -1,12 +1,12 @@
-from pydantic import BaseModel, Field
-from typing import List, Dict, Optional, Any
+from typing import Any, Dict, List, Optional
+from pydantic import BaseModel
 from app.models.domain import (
-    Document, KnowledgeSpace, Citation, ConflictReport, 
-    PlanStep, ActionRequest, KnowledgeGapRecord, GraphNode, GraphEdge
+    ActionRequest, Citation, ConflictReport, GraphEdge, GraphNode,
+    KnowledgeGapRecord, PlanStep
 )
 
 class ChatMessage(BaseModel):
-    role: str  # "user", "assistant", "system"
+    role: str
     content: str
     timestamp: Optional[str] = None
 
@@ -14,8 +14,8 @@ class QueryRequest(BaseModel):
     query: str
     space_id: str = "company-wide"
     research_mode: bool = False
-    strategy: str = "adaptive"  # "naive_rag", "hybrid_rag", "adaptive"
-    user_role: str = "employee"  # "employee", "hr_manager", "executive", "admin"
+    strategy: str = "adaptive"
+    user_role: str = "employee"
     user_id: str = "atharva"
     conversation_history: List[ChatMessage] = []
 

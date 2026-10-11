@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Any, List
+from typing import Any, Dict
 from app.models.domain import QueryComplexity
 
 class QueryAnalyzer:
@@ -16,7 +16,6 @@ class QueryAnalyzer:
     def analyze(self, query: str, force_research: bool = False) -> Dict[str, Any]:
         lower_q = query.lower().strip()
 
-        # Check for Action Triggers (exclude questions like 'Can I', 'What is', 'Is it allowed')
         is_question = bool(re.match(r'^(can|could|is|are|what|how|why|does|do|should)\b', lower_q))
         detected_action = None
         if not is_question:
@@ -25,7 +24,6 @@ class QueryAnalyzer:
                     detected_action = action_type
                     break
 
-        # Classify Complexity
         if detected_action:
             complexity = QueryComplexity.ACTION_TRIGGER.value
         elif force_research or any(k in lower_q for k in self.RESEARCH_KEYWORDS):
@@ -39,7 +37,6 @@ class QueryAnalyzer:
         else:
             complexity = QueryComplexity.SIMPLE_FACTUAL.value
 
-        # Extract search terms and entities
         search_terms = [w for w in re.findall(r'\b\w+\b', lower_q) if len(w) > 3]
 
         return {

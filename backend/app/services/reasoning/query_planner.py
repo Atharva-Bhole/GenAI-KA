@@ -69,7 +69,6 @@ class QueryPlanner:
                 )
             ]
 
-        # Generic Multi-Document Plan
         return [
             PlanStep(
                 step_id=1,

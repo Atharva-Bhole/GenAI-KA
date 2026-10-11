@@ -19,4 +19,4 @@ def execute_agent_action(request: ActionExecuteRequest):
             details=result
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to execute workflow action: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

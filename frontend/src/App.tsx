@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Sidebar } from './components/layout/Sidebar';
-import { Header } from './components/layout/Header';
-import { ChatCanvas } from './components/chat/ChatCanvas';
-import { ProvenanceDrawer } from './components/provenance/ProvenanceDrawer';
-import { KnowledgeGraphViewer } from './components/graph/KnowledgeGraphViewer';
+import { useEffect, useState } from 'react';
+import { ActionModal } from './components/actions/ActionModal';
+import { BenchmarkDashboard } from './components/admin/BenchmarkDashboard';
 import { DocumentManager } from './components/admin/DocumentManager';
 import { GovernanceDashboard } from './components/admin/GovernanceDashboard';
-import { BenchmarkDashboard } from './components/admin/BenchmarkDashboard';
-import { ActionModal } from './components/actions/ActionModal';
-import { KnowledgeSpace, QueryResponse, Citation, ActionRequest } from './types';
+import { ChatCanvas } from './components/chat/ChatCanvas';
+import { KnowledgeGraphViewer } from './components/graph/KnowledgeGraphViewer';
+import { Header } from './components/layout/Header';
+import { Sidebar } from './components/layout/Sidebar';
+import { ProvenanceDrawer } from './components/provenance/ProvenanceDrawer';
 import { fetchSpaces, sendQuery } from './services/api';
+import { ActionRequest, Citation, KnowledgeSpace, QueryResponse } from './types';
 
 interface Message {
   id: string;
@@ -26,19 +26,15 @@ export function App() {
   const [researchMode, setResearchMode] = useState<boolean>(false);
   const [userRole, setUserRole] = useState<string>('employee');
 
-  // Chat State
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Provenance Drawer State
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [currentCitations, setCurrentCitations] = useState<Citation[]>([]);
   const [selectedCitationIndex, setSelectedCitationIndex] = useState<number | null>(null);
 
-  // Action Modal State
   const [activeAction, setActiveAction] = useState<ActionRequest | null>(null);
 
-  // Load Knowledge Spaces on mount
   useEffect(() => {
     fetchSpaces()
       .then((data) => {
@@ -101,7 +97,6 @@ export function App() {
 
   return (
     <div className="flex h-screen w-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
-      {/* Left Sidebar */}
       <Sidebar
         currentTab={currentTab}
         onSelectTab={(tab) => setCurrentTab(tab as any)}
@@ -116,7 +111,6 @@ export function App() {
         }}
       />
 
-      {/* Main Workspace Center */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <Header
           spaces={spaces}
@@ -151,7 +145,6 @@ export function App() {
         </main>
       </div>
 
-      {/* Right Drawer: Provenance & Evidence */}
       <ProvenanceDrawer
         isOpen={drawerOpen && currentTab === 'chat'}
         onClose={() => setDrawerOpen(false)}
@@ -160,7 +153,6 @@ export function App() {
         onSelectCitation={setSelectedCitationIndex}
       />
 
-      {/* Human-in-the-Loop Action Confirmation Dialog */}
       <ActionModal
         action={activeAction}
         onClose={() => setActiveAction(null)}

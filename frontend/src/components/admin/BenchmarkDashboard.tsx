@@ -3,13 +3,11 @@ import {
   BarChart3,
   Play,
   ShieldCheck,
-  TrendingDown,
-  Clock,
   Sparkles,
-  Layers
+  TrendingDown,
 } from 'lucide-react';
-import { BenchmarkRunResponse } from '../../types';
 import { runBenchmarkEvaluation } from '../../services/api';
+import { BenchmarkRunResponse } from '../../types';
 
 export const BenchmarkDashboard: React.FC = () => {
   const [data, setData] = useState<BenchmarkRunResponse | null>(null);
@@ -30,7 +28,6 @@ export const BenchmarkDashboard: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-slate-950 overflow-hidden">
-      {/* Header */}
       <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
         <div>
           <h2 className="text-sm font-semibold text-white flex items-center gap-2">
@@ -52,9 +49,7 @@ export const BenchmarkDashboard: React.FC = () => {
         </button>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 overflow-y-auto p-5 space-y-6">
-        {/* Research Question Banner */}
         <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 space-y-1.5 leading-relaxed">
           <div className="font-semibold text-teal-300 flex items-center gap-1.5">
             <Sparkles className="h-4 w-4 text-teal-400" />
@@ -65,7 +60,6 @@ export const BenchmarkDashboard: React.FC = () => {
           </p>
         </div>
 
-        {/* Live Comparison Table */}
         {data ? (
           <div className="space-y-6">
             <div className="border border-slate-800 rounded-xl overflow-hidden bg-slate-900">
@@ -115,7 +109,6 @@ export const BenchmarkDashboard: React.FC = () => {
               </table>
             </div>
 
-            {/* Visual Performance Deltas */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
                 <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400">
@@ -140,7 +133,6 @@ export const BenchmarkDashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Test Case Inspection */}
             <div className="space-y-3">
               <h3 className="text-xs font-bold text-slate-200">
                 Qualitative Sample Case Breakdown

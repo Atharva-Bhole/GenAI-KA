@@ -137,3 +137,4 @@ npm run dev
 | `POST` | `/api/v1/actions/execute` | Execute approved workflow action (Leave, Jira, Email) |
 | `GET` | `/api/v1/governance/gaps` | List detected organizational knowledge gaps |
 | `POST` | `/api/v1/benchmark/run` | Execute live empirical comparison evaluation battery |
+

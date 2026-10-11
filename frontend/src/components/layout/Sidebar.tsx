@@ -1,14 +1,14 @@
 import React from 'react';
 import {
-  MessageSquare,
+  BarChart3,
+  Briefcase,
   FileText,
+  HelpCircle,
+  Layers,
+  MessageSquare,
   Share2,
   ShieldAlert,
-  BarChart3,
-  Layers,
   Sparkles,
-  HelpCircle,
-  Briefcase
 } from 'lucide-react';
 import { KnowledgeSpace } from '../../types';
 
@@ -31,9 +31,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSelectSpace,
   userRole,
   onSelectRole,
-  onSelectPrompt
+  onSelectPrompt,
 }) => {
-  const suggestedQueries = [
+  const samplePrompts = [
     { label: "Compare Leave Policy vs Handbook", query: "What is our annual leave policy entitlement, and has anything changed since last year?" },
     { label: "Overseas Travel + Annual Leave", query: "Can someone take annual leave immediately after an overseas business trip and still claim the return flight?" },
     { label: "Remote Engineers Outside State", query: "Compare our remote work policy with the employee handbook and tell me whether software engineers based outside Maharashtra can work permanently remotely." },
@@ -44,7 +44,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside className="w-72 bg-slate-900 border-r border-slate-800 flex flex-col h-screen select-none">
-      {/* Brand Header */}
       <div className="p-4 border-b border-slate-800 flex items-center justify-between">
         <div className="flex items-center space-x-2.5">
           <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-teal-500/20">
@@ -62,7 +61,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* Main Navigation Tabs */}
       <div className="p-3 space-y-1">
         <div className="text-[10px] uppercase font-bold text-slate-400 px-3 py-1 tracking-wider">
           Workspace
@@ -133,7 +131,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </button>
       </div>
 
-      {/* Knowledge Spaces Scoping */}
       <div className="p-3 border-t border-slate-800/80">
         <div className="flex items-center justify-between text-[10px] uppercase font-bold text-slate-400 px-3 py-1 tracking-wider">
           <span>Knowledge Spaces</span>
@@ -159,14 +156,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* Suggested Inquiries / Demos */}
       <div className="p-3 flex-1 overflow-y-auto border-t border-slate-800/80">
         <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-slate-400 px-3 py-1 tracking-wider">
           <HelpCircle className="h-3 w-3" />
           <span>Case Studies</span>
         </div>
         <div className="mt-1 space-y-1">
-          {suggestedQueries.map((item, idx) => (
+          {samplePrompts.map((item, idx) => (
             <button
               key={idx}
               onClick={() => onSelectPrompt(item.query)}
@@ -183,7 +179,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* User Persona & Role Footer */}
       <div className="p-3 border-t border-slate-800 bg-slate-950/40">
         <div className="flex items-center justify-between text-xs text-slate-400 mb-1.5">
           <span className="flex items-center gap-1.5 text-[11px]">

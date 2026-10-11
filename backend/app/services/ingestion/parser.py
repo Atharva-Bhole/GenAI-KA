@@ -1,25 +1,17 @@
 import os
-from typing import List, Dict, Any
-from pypdf import PdfReader
+from typing import Any, Dict, List
 import docx
+from pypdf import PdfReader
 
 class DocumentParser:
     @staticmethod
     def parse_file(file_path: str, filename: str) -> List[Dict[str, Any]]:
-        """
-        Parses a file into a list of page/section segments:
-        [{"page_number": int, "section_title": str, "text": str}]
-        """
         ext = os.path.splitext(filename)[1].lower()
-        
         if ext == ".pdf":
             return DocumentParser._parse_pdf(file_path)
         elif ext in [".docx", ".doc"]:
             return DocumentParser._parse_docx(file_path)
-        elif ext in [".txt", ".md", ".json", ".csv"]:
-            return DocumentParser._parse_text(file_path)
-        else:
-            return DocumentParser._parse_text(file_path)
+        return DocumentParser._parse_text(file_path)
 
     @staticmethod
     def _parse_pdf(file_path: str) -> List[Dict[str, Any]]:
@@ -34,8 +26,8 @@ class DocumentParser:
                         "section_title": f"Page {idx + 1}",
                         "text": txt.strip()
                     })
-        except Exception as e:
-            print(f"[DocumentParser] Error reading PDF {file_path}: {e}")
+        except Exception:
+            pass
         return pages
 
     @staticmethod
@@ -71,8 +63,8 @@ class DocumentParser:
                     "section_title": current_section,
                     "text": "\n".join(buffer)
                 })
-        except Exception as e:
-            print(f"[DocumentParser] Error reading DOCX {file_path}: {e}")
+        except Exception:
+            pass
         return segments
 
     @staticmethod
@@ -82,7 +74,6 @@ class DocumentParser:
             with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                 content = f.read()
 
-            # Split into synthetic pages/sections by headers or double newlines
             lines = content.splitlines()
             current_section = "Overview"
             buffer = []
@@ -110,8 +101,8 @@ class DocumentParser:
                     "section_title": current_section,
                     "text": "\n".join(buffer)
                 })
-        except Exception as e:
-            print(f"[DocumentParser] Error reading text {file_path}: {e}")
+        except Exception:
+            pass
         return segments
 
 parser = DocumentParser()

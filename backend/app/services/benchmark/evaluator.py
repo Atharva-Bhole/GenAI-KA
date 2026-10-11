@@ -1,6 +1,6 @@
 import time
-from typing import List, Dict, Any
 from datetime import datetime
+from typing import Any, Dict
 from app.models.schemas import BenchmarkMetric, BenchmarkRunResponse, QueryRequest
 from app.services.reasoning.synthesizer import synthesizer
 
@@ -71,10 +71,8 @@ class BenchmarkEvaluator:
                 m["count"] += 1
                 m["total_latencies"].append(lat)
 
-                # Evaluate strategy quality
                 top_doc = resp.citations[0].document_title if resp.citations else ""
                 
-                # In Naive RAG, older 2024 handbook often ranks first or conflicts are ignored
                 if strat == "naive_rag":
                     if q_obj.get("has_known_conflict"):
                         m["hallucinated_outdated"] += 1
@@ -90,7 +88,7 @@ class BenchmarkEvaluator:
                         m["correct_authoritative"] += 1
                     m["faithful_citations"] += 1
 
-                else:  # Adaptive Intelligence
+                else:
                     m["correct_authoritative"] += 1
                     m["faithful_citations"] += 1
                     if resp.conflict_report and resp.conflict_report.has_conflict:
@@ -106,7 +104,6 @@ class BenchmarkEvaluator:
 
             sample_comparisons.append(comparison_entry)
 
-        # Compute aggregate scores
         evaluations = []
         for strat in strategies:
             m = strategy_metrics[strat]
@@ -125,7 +122,7 @@ class BenchmarkEvaluator:
                 prec = 80.0
                 cit_acc = 82.5
                 halluc = 18.0
-            else:  # adaptive
+            else:
                 acc = 96.8
                 faith = 97.5
                 prec = 95.0

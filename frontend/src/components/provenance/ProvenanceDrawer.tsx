@@ -1,10 +1,10 @@
 import React from 'react';
 import {
-  X,
-  FileText,
   Calendar,
   CheckCircle,
-  HelpCircle
+  FileText,
+  HelpCircle,
+  X,
 } from 'lucide-react';
 import { Citation } from '../../types';
 
@@ -21,13 +21,12 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
   onClose,
   citations,
   selectedCitationIndex,
-  onSelectCitation
+  onSelectCitation,
 }) => {
   if (!isOpen) return null;
 
   return (
     <aside className="w-96 bg-slate-900 border-l border-slate-800 flex flex-col h-screen select-none z-20">
-      {/* Drawer Header */}
       <div className="p-4 border-b border-slate-800 flex items-center justify-between">
         <div>
           <h2 className="text-sm font-semibold text-white flex items-center gap-2">
@@ -46,7 +45,6 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
         </button>
       </div>
 
-      {/* Citations List */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {citations.length === 0 ? (
           <div className="text-center py-12 text-slate-400 text-xs">
@@ -67,7 +65,6 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
                     : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
                 }`}
               >
-                {/* Header: Title + Page */}
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex items-center gap-1.5">
                     <span className="h-5 w-5 rounded bg-teal-500/20 text-teal-400 font-mono font-bold text-[10px] flex items-center justify-center shrink-0">
@@ -82,7 +79,6 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
                   </span>
                 </div>
 
-                {/* Metadata Pills */}
                 <div className="flex flex-wrap gap-1.5 text-[10px] text-slate-400 mb-2.5">
                   <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
                     Page {c.page_number}
@@ -99,14 +95,12 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
                   </span>
                 </div>
 
-                {/* Highlighted Exact Text */}
                 <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800/80 text-[11px] text-slate-300 leading-relaxed font-sans mb-3">
                   <span className="bg-teal-500/20 text-teal-200 px-0.5 rounded">
                     "{c.exact_text}"
                   </span>
                 </div>
 
-                {/* Score Formula Breakdown */}
                 <div className="p-2 rounded-lg bg-slate-900/60 border border-slate-800 space-y-1.5 text-[10px]">
                   <div className="flex justify-between text-slate-400 font-mono">
                     <span>Dense Semantic (40%)</span>
@@ -135,7 +129,6 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
         )}
       </div>
 
-      {/* Drawer Footer Formula Explainer */}
       <div className="p-3 border-t border-slate-800 bg-slate-950/60 text-[10px] text-slate-400 leading-normal">
         <div className="font-semibold text-slate-300 mb-0.5 flex items-center gap-1">
           <CheckCircle className="h-3 w-3 text-teal-400" />

@@ -1,6 +1,6 @@
 import uuid
-from typing import List, Dict, Any
-from app.models.domain import Document, Chunk
+from typing import Any, Dict, List
+from app.models.domain import Chunk, Document
 
 class SemanticChunker:
     def __init__(self, target_chunk_size: int = 650, chunk_overlap: int = 120):
@@ -18,9 +18,8 @@ class SemanticChunker:
             if not text:
                 continue
 
-            # If segment is within target size, keep as single chunk
             if len(text) <= self.target_chunk_size:
-                chunk = Chunk(
+                chunks.append(Chunk(
                     id=str(uuid.uuid4()),
                     document_id=doc.id,
                     document_title=doc.title,
@@ -32,15 +31,12 @@ class SemanticChunker:
                     version=doc.version,
                     authority=doc.authority,
                     entities=[]
-                )
-                chunks.append(chunk)
+                ))
             else:
-                # Sliding window split on sentences or paragraphs
                 start = 0
                 while start < len(text):
                     end = min(start + self.target_chunk_size, len(text))
                     
-                    # Try to break on newline or period boundary
                     if end < len(text):
                         split_idx = text.rfind("\n", start, end)
                         if split_idx == -1 or split_idx < start + (self.target_chunk_size // 2):
@@ -50,7 +46,7 @@ class SemanticChunker:
 
                     chunk_text = text[start:end].strip()
                     if chunk_text:
-                        chunk = Chunk(
+                        chunks.append(Chunk(
                             id=str(uuid.uuid4()),
                             document_id=doc.id,
                             document_title=doc.title,
@@ -62,8 +58,7 @@ class SemanticChunker:
                             version=doc.version,
                             authority=doc.authority,
                             entities=[]
-                        )
-                        chunks.append(chunk)
+                        ))
 
                     if end >= len(text):
                         break

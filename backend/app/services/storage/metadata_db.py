@@ -1,9 +1,9 @@
-import sqlite3
 import json
-from typing import List, Optional, Dict, Any
+import sqlite3
 from datetime import datetime
+from typing import Any, Dict, List, Optional
 from app.core.config import settings
-from app.models.domain import Document, Chunk, KnowledgeSpace, KnowledgeGapRecord
+from app.models.domain import Chunk, Document, KnowledgeGapRecord, KnowledgeSpace
 
 class MetadataDB:
     def __init__(self, db_path: str = settings.DB_PATH):
@@ -19,7 +19,6 @@ class MetadataDB:
         with self._get_connection() as conn:
             cursor = conn.cursor()
             
-            # Documents Table
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS documents (
                 id TEXT PRIMARY KEY,
@@ -40,7 +39,6 @@ class MetadataDB:
             )
             """)
 
-            # Chunks Table
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS chunks (
                 id TEXT PRIMARY KEY,
@@ -58,7 +56,6 @@ class MetadataDB:
             )
             """)
 
-            # Knowledge Spaces Table
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS knowledge_spaces (
                 id TEXT PRIMARY KEY,
@@ -70,7 +67,6 @@ class MetadataDB:
             )
             """)
 
-            # Knowledge Gaps Table
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS knowledge_gaps (
                 id TEXT PRIMARY KEY,
@@ -85,7 +81,6 @@ class MetadataDB:
             )
             """)
 
-            # Audit / Analytics Log
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS query_logs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -102,7 +97,6 @@ class MetadataDB:
 
             conn.commit()
 
-    # --- Document Operations ---
     def insert_document(self, doc: Document):
         with self._get_connection() as conn:
             conn.execute("""
@@ -138,7 +132,6 @@ class MetadataDB:
             conn.execute("DELETE FROM documents WHERE id = ?", (doc_id,))
             conn.commit()
 
-    # --- Chunk Operations ---
     def insert_chunks(self, chunks: List[Chunk]):
         with self._get_connection() as conn:
             for c in chunks:
@@ -172,7 +165,6 @@ class MetadataDB:
                 chunks.append(Chunk(**d, entities=entities))
             return chunks
 
-    # --- Knowledge Spaces ---
     def insert_space(self, space: KnowledgeSpace):
         with self._get_connection() as conn:
             conn.execute("""
@@ -187,13 +179,11 @@ class MetadataDB:
             spaces = []
             for r in rows:
                 s_dict = dict(r)
-                # Count docs
                 cnt = conn.execute("SELECT COUNT(*) FROM documents WHERE space_id = ?", (s_dict["id"],)).fetchone()[0]
                 s_dict["document_count"] = cnt
                 spaces.append(KnowledgeSpace(**s_dict))
             return spaces
 
-    # --- Knowledge Gaps ---
     def insert_gap(self, gap: KnowledgeGapRecord):
         with self._get_connection() as conn:
             conn.execute("""
@@ -222,7 +212,6 @@ class MetadataDB:
             conn.execute("UPDATE knowledge_gaps SET status = 'resolved' WHERE id = ?", (gap_id,))
             conn.commit()
 
-    # --- Audit Logs ---
     def log_query(self, query: str, space_id: str, strategy: str, confidence: float, latency_ms: float, had_conflict: bool, had_gap: bool):
         with self._get_connection() as conn:
             conn.execute("""

@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  Send,
-  Sparkles,
   Bot,
   Compass,
   FileCheck2,
-  Workflow
+  Send,
+  Sparkles,
+  Workflow,
 } from 'lucide-react';
+import { ActionRequest, QueryResponse } from '../../types';
 import { MessageBubble } from './MessageBubble';
-import { QueryResponse, ActionRequest } from '../../types';
 
 interface Message {
   id: string;
@@ -34,7 +34,7 @@ export const ChatCanvas: React.FC<ChatCanvasProps> = ({
   onSelectCitation,
   onOpenActionModal,
   researchMode,
-  activeSpaceName
+  activeSpaceName,
 }) => {
   const [inputText, setInputText] = useState('');
   const endRef = useRef<HTMLDivElement>(null);
@@ -79,7 +79,6 @@ export const ChatCanvas: React.FC<ChatCanvasProps> = ({
 
   return (
     <div className="flex-1 flex flex-col h-full bg-slate-950/60 overflow-hidden">
-      {/* Scrollable Conversation Stream */}
       <div className="flex-1 overflow-y-auto p-6">
         {messages.length === 0 ? (
           <div className="max-w-3xl mx-auto py-12 text-center select-none">
@@ -147,7 +146,6 @@ export const ChatCanvas: React.FC<ChatCanvasProps> = ({
         )}
       </div>
 
-      {/* Query Input Bar */}
       <div className="p-4 border-t border-slate-800 bg-slate-900/80 backdrop-blur">
         <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
           <div className="relative rounded-2xl bg-slate-850 border border-slate-700/80 focus-within:border-teal-500 shadow-lg shadow-black/40 transition-all">

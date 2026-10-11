@@ -1,17 +1,17 @@
 import os
-import uuid
 import shutil
+import uuid
 from typing import List, Optional
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from app.core.config import settings
 from app.models.domain import Document
 from app.models.schemas import DocumentCreateRequest
-from app.services.storage.metadata_db import db
-from app.services.storage.vector_store import vector_store
-from app.services.storage.bm25_store import bm25_store
-from app.services.ingestion.parser import parser
 from app.services.ingestion.chunker import chunker
 from app.services.ingestion.entity_extractor import entity_extractor
+from app.services.ingestion.parser import parser
+from app.services.storage.bm25_store import bm25_store
+from app.services.storage.metadata_db import db
+from app.services.storage.vector_store import vector_store
 
 router = APIRouter()
 
@@ -46,7 +46,6 @@ async def upload_document(
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        # Parse document into page segments
         segments = parser.parse_file(file_path, filename)
         if not segments:
             segments = [{"page_number": 1, "section_title": "General", "text": "Empty document."}]
@@ -67,7 +66,6 @@ async def upload_document(
             chunk_count=0
         )
 
-        # Chunk and index
         chunks = chunker.chunk_document(doc, segments)
         doc.chunk_count = len(chunks)
 
@@ -77,7 +75,7 @@ async def upload_document(
 
         return {"success": True, "document": doc, "chunks_created": len(chunks)}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to ingest document: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/manual")
 def create_manual_document(req: DocumentCreateRequest):

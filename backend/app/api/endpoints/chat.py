@@ -7,7 +7,6 @@ router = APIRouter()
 @router.post("/query", response_model=QueryResponse)
 def query_knowledge_base(request: QueryRequest):
     try:
-        response = synthesizer.process_query(request)
-        return response
+        return synthesizer.process_query(request)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Knowledge retrieval error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

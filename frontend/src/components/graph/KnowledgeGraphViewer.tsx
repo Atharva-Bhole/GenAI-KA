@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Share2,
-  Search,
+  Layers,
   RefreshCw,
-  Layers
+  Search,
+  Share2,
 } from 'lucide-react';
-import { KnowledgeGraphData, GraphNode } from '../../types';
 import { fetchKnowledgeGraph } from '../../services/api';
+import { GraphNode, KnowledgeGraphData } from '../../types';
 
 export const KnowledgeGraphViewer: React.FC = () => {
   const [graphData, setGraphData] = useState<KnowledgeGraphData>({ nodes: [], edges: [] });
@@ -18,7 +18,6 @@ export const KnowledgeGraphViewer: React.FC = () => {
     setLoading(true);
     try {
       const data = await fetchKnowledgeGraph();
-      // Lay out nodes in a readable orbit / circle coordinate map
       const total = data.nodes.length;
       const radius = 240;
       const centerX = 380;
@@ -53,12 +52,12 @@ export const KnowledgeGraphViewer: React.FC = () => {
 
   const getNodeColor = (type: string) => {
     switch (type.toLowerCase()) {
-      case 'policy': return '#14b8a6'; // Teal
-      case 'concept': return '#818cf8'; // Indigo
-      case 'role': return '#34d399'; // Emerald
-      case 'department': return '#fbbf24'; // Amber
-      case 'security': return '#f43f5e'; // Rose
-      case 'tool': return '#38bdf8'; // Sky
+      case 'policy': return '#14b8a6';
+      case 'concept': return '#818cf8';
+      case 'role': return '#34d399';
+      case 'department': return '#fbbf24';
+      case 'security': return '#f43f5e';
+      case 'tool': return '#38bdf8';
       default: return '#94a3b8';
     }
   };
@@ -69,7 +68,6 @@ export const KnowledgeGraphViewer: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-slate-950 overflow-hidden">
-      {/* Top Controls Bar */}
       <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Share2 className="h-4 w-4 text-teal-400" />
@@ -93,16 +91,13 @@ export const KnowledgeGraphViewer: React.FC = () => {
           <button
             onClick={loadGraph}
             className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
-            title="Refresh Knowledge Graph"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
         </div>
       </div>
 
-      {/* Main Canvas + Details Pane */}
       <div className="flex-1 flex overflow-hidden">
-        {/* SVG Graph Viewport */}
         <div className="flex-1 relative overflow-auto bg-radial-gradient flex items-center justify-center p-4">
           <svg width="760" height="640" className="select-none">
             <defs>
@@ -128,7 +123,6 @@ export const KnowledgeGraphViewer: React.FC = () => {
               </marker>
             </defs>
 
-            {/* Edges */}
             {graphData.edges.map((edge, idx) => {
               const srcNode = graphData.nodes.find(n => n.id === edge.source);
               const tgtNode = graphData.nodes.find(n => n.id === edge.target);
@@ -164,7 +158,6 @@ export const KnowledgeGraphViewer: React.FC = () => {
               );
             })}
 
-            {/* Nodes */}
             {graphData.nodes.map((node) => {
               const isSelected = selectedNode?.id === node.id;
               const isMatch = searchTerm ? node.label.toLowerCase().includes(searchTerm.toLowerCase()) : true;
@@ -201,7 +194,6 @@ export const KnowledgeGraphViewer: React.FC = () => {
           </svg>
         </div>
 
-        {/* Selected Entity Details Sidebar */}
         <div className="w-80 border-l border-slate-800 bg-slate-900/80 p-4 overflow-y-auto">
           {selectedNode ? (
             <div className="space-y-4">
@@ -220,7 +212,6 @@ export const KnowledgeGraphViewer: React.FC = () => {
                 </p>
               </div>
 
-              {/* Direct Relationships */}
               <div className="border-t border-slate-800 pt-3">
                 <h4 className="text-xs font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
                   <Layers className="h-3.5 w-3.5 text-teal-400" />
@@ -246,7 +237,6 @@ export const KnowledgeGraphViewer: React.FC = () => {
                 )}
               </div>
 
-              {/* Entity Context */}
               <div className="border-t border-slate-800 pt-3 text-[11px] text-slate-400">
                 <span className="font-medium text-slate-300">How the Assistant uses this:</span>
                 <p className="mt-1 leading-relaxed">

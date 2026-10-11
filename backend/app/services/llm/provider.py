@@ -1,9 +1,6 @@
-import os
-import json
-import re
-from typing import List, Dict, Any, Optional
+from typing import Dict, List, Optional
 from app.core.config import settings
-from app.models.domain import Citation, ConflictReport, PlanStep, ActionRequest
+from app.models.domain import Citation, ConflictReport
 
 class LLMProvider:
     def __init__(self):
@@ -16,17 +13,15 @@ class LLMProvider:
             try:
                 from google import genai
                 self.gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
-                print("[LLMProvider] Initialized Gemini client.")
-            except Exception as e:
-                print(f"[LLMProvider] Failed to initialize Gemini: {e}")
+            except Exception:
+                pass
 
         if settings.OPENAI_API_KEY:
             try:
                 from openai import OpenAI
                 self.openai_client = OpenAI(api_key=settings.OPENAI_API_KEY)
-                print("[LLMProvider] Initialized OpenAI client.")
-            except Exception as e:
-                print(f"[LLMProvider] Failed to initialize OpenAI: {e}")
+            except Exception:
+                pass
 
     def generate_chat_response(
         self,
@@ -36,10 +31,6 @@ class LLMProvider:
         history: Optional[List[Dict[str, str]]] = None,
         research_mode: bool = False
     ) -> str:
-        """
-        Synthesizes grounded response using LLM or smart fallback synthesizer.
-        """
-        # 1. Format Context Evidence
         evidence_text = ""
         for i, c in enumerate(citations[:5], 1):
             evidence_text += (
@@ -76,7 +67,6 @@ class LLMProvider:
             "Provide a comprehensive, clear, and grounded answer with precise citations."
         )
 
-        # Try Gemini
         if self.gemini_client:
             try:
                 resp = self.gemini_client.models.generate_content(
@@ -85,10 +75,9 @@ class LLMProvider:
                 )
                 if resp.text:
                     return resp.text.strip()
-            except Exception as e:
-                print(f"[LLMProvider] Gemini error: {e}")
+            except Exception:
+                pass
 
-        # Try OpenAI
         if self.openai_client:
             try:
                 resp = self.openai_client.chat.completions.create(
@@ -102,10 +91,9 @@ class LLMProvider:
                 ans = resp.choices[0].message.content
                 if ans:
                     return ans.strip()
-            except Exception as e:
-                print(f"[LLMProvider] OpenAI error: {e}")
+            except Exception:
+                pass
 
-        # High-Fidelity Rule-Based Semantic Synthesizer Fallback
         return self._local_synthesize(query, citations, conflict, research_mode)
 
     def _local_synthesize(
@@ -125,8 +113,8 @@ class LLMProvider:
         lines = []
 
         if conflict and conflict.has_conflict:
-            lines.append("### ⚠️ Policy Conflict & Governance Advisory")
-            lines.append(f"A discrepancy was identified between active organizational records regarding this query.")
+            lines.append("### Policy Conflict & Governance Advisory")
+            lines.append("A discrepancy was identified between active organizational records regarding this query.")
             lines.append(f"- **{conflict.source_b} (v{conflict.version_b})**: {conflict.claim_b}")
             lines.append(f"- **{conflict.source_a} (v{conflict.version_a})**: {conflict.claim_a}")
             lines.append(f"\n**Resolution**: According to enterprise policy hierarchy, **{conflict.authoritative_source}** is classified as the authoritative document ({conflict.recommended_answer}).\n")

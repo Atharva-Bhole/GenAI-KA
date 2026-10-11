@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  FileText,
-  UploadCloud,
-  Trash2,
   Calendar,
+  FileText,
   Layers,
   Plus,
-  RefreshCw
+  RefreshCw,
+  Trash2,
+  UploadCloud,
 } from 'lucide-react';
+import { deleteDocument, fetchDocuments, uploadDocument } from '../../services/api';
 import { Document, KnowledgeSpace } from '../../types';
-import { fetchDocuments, uploadDocument, deleteDocument } from '../../services/api';
 
 interface DocumentManagerProps {
   spaces: KnowledgeSpace[];
@@ -21,7 +21,6 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ spaces }) => {
   const [uploading, setUploading] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
 
-  // Upload Form State
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [department, setDepartment] = useState('HR');
@@ -67,7 +66,6 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ spaces }) => {
       if (file) {
         formData.append('file', file);
       } else {
-        // Create synthetic markdown blob
         const blob = new Blob([`# ${title}\n\nDocument ingested into ${department} knowledge space.`], { type: 'text/markdown' });
         formData.append('file', blob, `${title.replace(/\s+/g, '_')}.md`);
       }
@@ -94,7 +92,6 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ spaces }) => {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-slate-950 overflow-hidden">
-      {/* Top Header */}
       <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
         <div>
           <h2 className="text-sm font-semibold text-white flex items-center gap-2">
@@ -123,7 +120,6 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ spaces }) => {
         </div>
       </div>
 
-      {/* Documents Table / Grid */}
       <div className="flex-1 overflow-y-auto p-5">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {documents.map((doc) => (
@@ -149,7 +145,6 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ spaces }) => {
                   <button
                     onClick={() => handleDelete(doc.id)}
                     className="p-1 rounded text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                    title="Delete document"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
@@ -192,7 +187,6 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ spaces }) => {
         </div>
       </div>
 
-      {/* Upload & Metadata Tagging Modal */}
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-5 shadow-2xl">

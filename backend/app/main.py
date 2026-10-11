@@ -1,20 +1,17 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-from app.core.config import settings
 from app.api.router import api_router
+from app.core.config import settings
 from app.sample_data.seed_documents import seed_database_if_empty
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print(f"[{settings.PROJECT_NAME}] Starting up...")
     seed_database_if_empty()
     yield
-    print(f"[{settings.PROJECT_NAME}] Shutting down...")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="Enterprise Knowledge Intelligence Layer with Hybrid Retrieval, Freshness & Authority Scoring, Knowledge Graph, and Agentic Actions.",
     version="1.0.0",
     lifespan=lifespan
 )

@@ -57,12 +57,12 @@ class EntityExtractor:
     def extract_and_link(self, chunks: List[Chunk]):
         for chunk in chunks:
             text = chunk.content
-            detected_in_chunk = []
+            detected = []
 
             for ent_name, ent_type in self.KNOWN_ENTITIES:
                 pattern = re.compile(r'\b' + re.escape(ent_name) + r'\b', re.IGNORECASE)
                 if pattern.search(text) or pattern.search(chunk.document_title):
-                    detected_in_chunk.append(ent_name)
+                    detected.append(ent_name)
                     graph_store.add_node(
                         node_id=ent_name,
                         label=ent_name,
@@ -71,16 +71,14 @@ class EntityExtractor:
                         metadata={"source_doc": chunk.document_title, "page": chunk.page_number}
                     )
 
-            # Connect chunk document to concepts
             doc_node = chunk.document_title
             graph_store.add_node(doc_node, doc_node, "Policy", department=chunk.department)
 
-            for ent in detected_in_chunk:
+            for ent in detected:
                 graph_store.add_edge(doc_node, ent, "defines", weight=1.0)
 
-            chunk.entities = detected_in_chunk
+            chunk.entities = detected
 
-        # Add domain relation rules to graph
         for src, rel, tgt in self.RELATION_RULES:
             graph_store.add_edge(src, tgt, rel, weight=1.0)
 

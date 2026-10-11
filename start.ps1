@@ -9,3 +9,4 @@ Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd frontend; npm 
 Write-Host "FastAPI Backend API: http://127.0.0.1:8000/docs" -ForegroundColor Green
 Write-Host "React Workspace:     http://localhost:5173" -ForegroundColor Green
 Write-Host "======================================================================" -ForegroundColor Cyan
+

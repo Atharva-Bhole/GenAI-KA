@@ -6,5 +6,4 @@ router = APIRouter()
 
 @router.get("", response_model=KnowledgeGraphResponse)
 def get_knowledge_graph():
-    data = graph_store.export_graph_data()
-    return data
+    return graph_store.export_graph_data()

@@ -1,5 +1,5 @@
 import re
-from typing import List, Dict, Tuple, Optional
+from typing import Dict, List, Optional, Tuple
 from rank_bm25 import BM25Okapi
 
 STOPWORDS = {
@@ -39,9 +39,6 @@ class BM25Store:
             self.bm25 = None
 
     def search(self, query: str, top_k: int = 10) -> List[Tuple[str, float]]:
-        """
-        Returns list of (chunk_id, normalized_bm25_score) where score in [0.0, 1.0]
-        """
         if not self.bm25 or not self.chunk_ids:
             return []
 

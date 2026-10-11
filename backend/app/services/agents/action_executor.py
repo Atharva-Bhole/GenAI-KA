@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 from app.models.domain import ActionRequest
 from app.services.agents.tools import tools
 
@@ -65,7 +65,6 @@ class ActionExecutor:
                 subject=params.get("subject", "Policy Digest"),
                 body=params.get("body", "Content")
             )
-        else:
-            raise ValueError(f"Unknown action type: {action_type}")
+        raise ValueError(f"Unknown action type: {action_type}")
 
 action_executor = ActionExecutor()

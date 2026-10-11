@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import {
+  CheckCircle2,
+  Workflow,
   X,
   Zap,
-  CheckCircle2,
-  Workflow
 } from 'lucide-react';
-import { ActionRequest } from '../../types';
 import { executeAction } from '../../services/api';
+import { ActionRequest } from '../../types';
 
 interface ActionModalProps {
   action: ActionRequest | null;
@@ -17,7 +17,7 @@ interface ActionModalProps {
 export const ActionModal: React.FC<ActionModalProps> = ({
   action,
   onClose,
-  onSuccess
+  onSuccess,
 }) => {
   const [executing, setExecuting] = useState(false);
   const [result, setResult] = useState<any>(null);

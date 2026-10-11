@@ -1,5 +1,5 @@
+from typing import List
 from fastapi import APIRouter
-from typing import List, Dict, Any
 from app.models.domain import KnowledgeGapRecord
 from app.services.storage.metadata_db import db
 

@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  ShieldAlert,
-  HelpCircle,
-  BarChart3,
-  CheckCircle2,
   AlertTriangle,
+  CheckCircle2,
+  HelpCircle,
   RefreshCw,
-  Clock
+  ShieldAlert,
 } from 'lucide-react';
-import { KnowledgeGapRecord, AnalyticsStats } from '../../types';
-import { fetchKnowledgeGaps, resolveGap, fetchAnalytics } from '../../services/api';
+import { fetchAnalytics, fetchKnowledgeGaps, resolveGap } from '../../services/api';
+import { AnalyticsStats, KnowledgeGapRecord } from '../../types';
 
 export const GovernanceDashboard: React.FC = () => {
   const [gaps, setGaps] = useState<KnowledgeGapRecord[]>([]);
@@ -47,7 +45,6 @@ export const GovernanceDashboard: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-slate-950 overflow-hidden">
-      {/* Top Header */}
       <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
         <div>
           <h2 className="text-sm font-semibold text-white flex items-center gap-2">
@@ -66,9 +63,7 @@ export const GovernanceDashboard: React.FC = () => {
         </button>
       </div>
 
-      {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto p-5 space-y-6">
-        {/* Real-time Analytics Stats Cards */}
         {stats && (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
             <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
@@ -94,7 +89,6 @@ export const GovernanceDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Conflict Intelligence Case Studies */}
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-200">
             <AlertTriangle className="h-4 w-4 text-amber-400" />
@@ -102,7 +96,6 @@ export const GovernanceDashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Conflict Case 1 */}
             <div className="p-4 rounded-xl bg-slate-900/90 border border-amber-500/30 text-xs space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-amber-400">Annual Leave Entitlement (21 vs 24 Days)</span>
@@ -126,7 +119,6 @@ export const GovernanceDashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Conflict Case 2 */}
             <div className="p-4 rounded-xl bg-slate-900/90 border border-amber-500/30 text-xs space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-amber-400">Password Length & Expiration Rules</span>
@@ -152,7 +144,6 @@ export const GovernanceDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Knowledge Gap Registry */}
         <div className="space-y-3 pt-2">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-200">
             <span className="flex items-center gap-2">

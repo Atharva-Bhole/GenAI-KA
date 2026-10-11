@@ -1,11 +1,10 @@
 from datetime import datetime
 from app.models.domain import Document, KnowledgeSpace
-from app.services.storage.metadata_db import db
-from app.services.storage.vector_store import vector_store
-from app.services.storage.bm25_store import bm25_store
-from app.services.ingestion.parser import parser
 from app.services.ingestion.chunker import chunker
 from app.services.ingestion.entity_extractor import entity_extractor
+from app.services.storage.bm25_store import bm25_store
+from app.services.storage.metadata_db import db
+from app.services.storage.vector_store import vector_store
 
 DEFAULT_SPACES = [
     KnowledgeSpace(
@@ -189,13 +188,11 @@ Under the Project Alpha & Horizon initiatives, engineers based outside Maharasht
 def seed_database_if_empty():
     existing_spaces = db.list_spaces()
     if not existing_spaces:
-        print("[Seed] Populating default Knowledge Spaces...")
         for sp in DEFAULT_SPACES:
             db.insert_space(sp)
 
     existing_docs = db.list_documents()
     if not existing_docs:
-        print("[Seed] Ingesting authoritative enterprise knowledge documents...")
         all_chunks = []
         for doc_info in SEED_DOCUMENTS_DATA:
             doc = Document(
@@ -214,7 +211,6 @@ def seed_database_if_empty():
                 last_updated=doc_info["effective_date"]
             )
 
-            # Parse markdown content into segments
             segments = []
             sections = doc_info["content"].split("## ")
             for idx, sec in enumerate(sections):
@@ -229,25 +225,19 @@ def seed_database_if_empty():
                     "text": body if body else sec
                 })
 
-            # Chunk document
             doc_chunks = chunker.chunk_document(doc, segments)
             doc.chunk_count = len(doc_chunks)
 
-            # Insert document & chunks into DB
             db.insert_document(doc)
             db.insert_chunks(doc_chunks)
             all_chunks.extend(doc_chunks)
 
-        # Extract entities and populate Knowledge Graph
         entity_extractor.extract_and_link(all_chunks)
 
-        # Build Vector and BM25 indexes
         chunk_dicts = [{"id": c.id, "text": f"{c.document_title} - {c.section_title}: {c.content}"} for c in all_chunks]
         vector_store.rebuild_index(chunk_dicts)
         bm25_store.rebuild_index(chunk_dicts)
-        print(f"[Seed] Successfully indexed {len(all_chunks)} chunks into Vector, BM25, and Knowledge Graph stores.")
     else:
-        # Re-index existing chunks into in-memory vector & BM25 stores on startup
         all_chunks = db.get_all_chunks()
         entity_extractor.extract_and_link(all_chunks)
         chunk_dicts = [{"id": c.id, "text": f"{c.document_title} - {c.section_title}: {c.content}"} for c in all_chunks]

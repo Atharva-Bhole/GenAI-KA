@@ -1,7 +1,7 @@
-from pydantic import BaseModel, Field
-from typing import List, Dict, Optional, Any
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+from pydantic import BaseModel, Field
 
 class AuthorityType(str, Enum):
     OFFICIAL_POLICY = "official_policy"
@@ -31,7 +31,7 @@ class Document(BaseModel):
     filename: str
     title: str
     department: str
-    effective_date: str  # YYYY-MM-DD
+    effective_date: str
     version: str
     authority: str = AuthorityType.OFFICIAL_POLICY.value
     owner: str
@@ -69,14 +69,14 @@ class KnowledgeSpace(BaseModel):
 class GraphNode(BaseModel):
     id: str
     label: str
-    type: str  # "Policy", "Concept", "Department", "Rule", "Role", "Tool"
+    type: str
     department: Optional[str] = None
     metadata: Dict[str, Any] = {}
 
 class GraphEdge(BaseModel):
     source: str
     target: str
-    relation: str  # "governed_by", "entitled_to", "reimbursed_under", "supersedes", "applies_to"
+    relation: str
     weight: float = 1.0
 
 class Citation(BaseModel):
@@ -114,15 +114,15 @@ class PlanStep(BaseModel):
     title: str
     description: str
     targeted_sources: List[str] = []
-    status: str = "pending"  # "pending", "in_progress", "completed"
+    status: str = "pending"
     findings: str = ""
 
 class ActionRequest(BaseModel):
-    action_type: str  # "leave_request", "jira_ticket", "email_notification"
+    action_type: str
     title: str
     parameters: Dict[str, Any]
     requires_confirmation: bool = True
-    status: str = "proposed"  # "proposed", "executed", "cancelled"
+    status: str = "proposed"
     execution_result: Optional[Dict[str, Any]] = None
 
 class KnowledgeGapRecord(BaseModel):
@@ -133,5 +133,5 @@ class KnowledgeGapRecord(BaseModel):
     detected_at: str = Field(default_factory=lambda: datetime.now().isoformat())
     confidence_score: float
     closest_sources: List[str] = []
-    status: str = "open"  # "open", "assigned", "resolved"
+    status: str = "open"
     owner_contact: str = "admin@company.internal"

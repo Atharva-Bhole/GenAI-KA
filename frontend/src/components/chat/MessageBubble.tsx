@@ -1,16 +1,16 @@
 import React from 'react';
 import {
   AlertTriangle,
+  ArrowRight,
   CheckCircle2,
   Clock,
-  Sparkles,
-  ArrowRight,
   ExternalLink,
+  HelpCircle,
   ShieldCheck,
+  Sparkles,
   Zap,
-  HelpCircle
 } from 'lucide-react';
-import { QueryResponse, ActionRequest } from '../../types';
+import { ActionRequest, QueryResponse } from '../../types';
 
 interface MessageBubbleProps {
   message: {
@@ -44,13 +44,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   return (
     <div className="flex gap-3 mb-8">
-      {/* Assistant Avatar */}
       <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center shrink-0 shadow-md shadow-teal-500/20 text-slate-950 font-bold text-xs">
         <Sparkles className="h-4 w-4 text-slate-950" />
       </div>
 
       <div className="flex-1 max-w-4xl space-y-3">
-        {/* Telemetry & Confidence Pill Bar */}
         {details && (
           <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
             <span className="px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-teal-400 font-mono font-medium flex items-center gap-1">
@@ -67,7 +65,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
         )}
 
-        {/* Conflict Intelligence Advisory Card */}
         {details?.conflict_report && details.conflict_report.has_conflict && (
           <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 shadow-sm text-xs">
             <div className="flex items-center gap-2 text-amber-400 font-semibold mb-2">
@@ -100,7 +97,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
         )}
 
-        {/* Research Mode Multi-Step Reasoning Plan */}
         {details?.plan_steps && details.plan_steps.length > 0 && (
           <div className="rounded-xl border border-indigo-500/30 bg-indigo-950/15 p-3.5 text-xs space-y-2">
             <div className="flex items-center justify-between text-indigo-300 font-semibold">
@@ -131,7 +127,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
         )}
 
-        {/* Action Trigger Card (Leave, Jira, Email) */}
         {details?.proposed_action && (
           <div className="rounded-xl border border-teal-500/40 bg-teal-950/20 p-3.5 text-xs">
             <div className="flex items-center justify-between mb-2">
@@ -156,7 +151,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
         )}
 
-        {/* Knowledge Gap Detected Card */}
         {details?.knowledge_gap && (
           <div className="rounded-xl border border-red-500/40 bg-red-950/20 p-3.5 text-xs">
             <div className="flex items-center gap-2 text-red-300 font-semibold mb-1">
@@ -174,12 +168,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
         )}
 
-        {/* Grounded Answer Markdown Text */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-sm p-4 text-sm text-slate-200 leading-relaxed space-y-2 whitespace-pre-line shadow-sm">
           {message.content}
         </div>
 
-        {/* Source Citation Badges */}
         {details?.citations && details.citations.length > 0 && (
           <div className="pt-1">
             <div className="text-[11px] font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5">
