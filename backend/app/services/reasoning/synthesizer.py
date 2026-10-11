@@ -52,7 +52,7 @@ class KnowledgeSynthesizer:
                 user_id=request.user_id
             )
 
-        answer = llm_provider.generate_chat_response(
+        answer, followups, provider_used = llm_provider.generate_chat_response(
             query=request.query,
             citations=citations,
             conflict=conflict_rep,
@@ -89,7 +89,9 @@ class KnowledgeSynthesizer:
             strategy_used=request.strategy,
             retrieval_latency_ms=retrieval_latency,
             total_latency_ms=total_latency,
-            active_space=request.space_id
+            active_space=request.space_id,
+            provider_used=provider_used,
+            suggested_followups=followups
         )
 
 synthesizer = KnowledgeSynthesizer()

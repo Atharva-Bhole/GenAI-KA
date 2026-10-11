@@ -13,25 +13,12 @@ class VectorStore:
         self.vectorizer: Optional[TfidfVectorizer] = None
         self.svd: Optional[TruncatedSVD] = None
         self.dimension: int = 128
-
-    def _embed_local(self, texts: List[str]) -> np.ndarray:
-        if not texts:
-            return np.zeros((0, self.dimension))
-        
-        tfidf = TfidfVectorizer(
-            ngram_range=(1, 2),
-            max_features=512,
-            stop_words='english'
-        )
-        tfidf_mat = tfidf.fit_transform(texts).toarray()
-        
-        norms = np.linalg.norm(tfidf_mat, axis=1, keepdims=True)
-        norms[norms == 0] = 1.0
-        return tfidf_mat / norms
+        self.gemini_vectors_active: bool = False
 
     def rebuild_index(self, chunks: List[Dict[str, str]]):
         self.chunk_ids = [c["id"] for c in chunks]
         self.corpus_texts = [c["text"] for c in chunks]
+        self.gemini_vectors_active = False
         
         if not self.corpus_texts:
             self.vectors = None
@@ -41,20 +28,29 @@ class VectorStore:
             try:
                 from google import genai
                 client = genai.Client(api_key=settings.GEMINI_API_KEY)
-                embeddings = []
-                for text in self.corpus_texts:
+                all_embeddings = []
+                batch_size = 10
+                
+                for i in range(0, len(self.corpus_texts), batch_size):
+                    batch = self.corpus_texts[i:i + batch_size]
+                    trimmed = [t[:1800] for t in batch]
                     resp = client.models.embed_content(
                         model="text-embedding-004",
-                        contents=text[:2000]
+                        contents=trimmed
                     )
-                    embeddings.append(resp.embedding.values)
-                self.vectors = np.array(embeddings, dtype=np.float32)
-                norms = np.linalg.norm(self.vectors, axis=1, keepdims=True)
-                norms[norms == 0] = 1.0
-                self.vectors = self.vectors / norms
-                return
+                    if hasattr(resp, 'embeddings') and resp.embeddings:
+                        for emb in resp.embeddings:
+                            all_embeddings.append(emb.values)
+                
+                if len(all_embeddings) == len(self.corpus_texts):
+                    self.vectors = np.array(all_embeddings, dtype=np.float32)
+                    norms = np.linalg.norm(self.vectors, axis=1, keepdims=True)
+                    norms[norms == 0] = 1.0
+                    self.vectors = self.vectors / norms
+                    self.gemini_vectors_active = True
+                    return
             except Exception:
-                pass
+                self.gemini_vectors_active = False
 
         self.vectorizer = TfidfVectorizer(
             ngram_range=(1, 3),
@@ -82,18 +78,22 @@ class VectorStore:
             return []
 
         try:
-            if settings.GEMINI_API_KEY:
+            if settings.GEMINI_API_KEY and self.gemini_vectors_active:
                 from google import genai
                 client = genai.Client(api_key=settings.GEMINI_API_KEY)
                 resp = client.models.embed_content(
                     model="text-embedding-004",
-                    contents=query
+                    contents=query[:1800]
                 )
-                q_vec = np.array([resp.embedding.values], dtype=np.float32)
-                q_norm = np.linalg.norm(q_vec)
-                if q_norm > 0:
-                    q_vec = q_vec / q_norm
-                sims = cosine_similarity(q_vec, self.vectors)[0]
+                if hasattr(resp, 'embeddings') and resp.embeddings:
+                    q_vals = resp.embeddings[0].values
+                    q_vec = np.array([q_vals], dtype=np.float32)
+                    q_norm = np.linalg.norm(q_vec)
+                    if q_norm > 0:
+                        q_vec = q_vec / q_norm
+                    sims = cosine_similarity(q_vec, self.vectors)[0]
+                else:
+                    sims = np.zeros(len(self.chunk_ids))
             elif self.vectorizer is not None:
                 q_tfidf = self.vectorizer.transform([query]).toarray()
                 q_dense = self.svd.transform(q_tfidf) if self.svd is not None else q_tfidf
@@ -104,7 +104,15 @@ class VectorStore:
             else:
                 sims = np.zeros(len(self.chunk_ids))
         except Exception:
-            return []
+            if self.vectorizer is not None:
+                try:
+                    q_tfidf = self.vectorizer.transform([query]).toarray()
+                    q_dense = self.svd.transform(q_tfidf) if self.svd is not None else q_tfidf
+                    sims = cosine_similarity(q_dense, self.vectors)[0]
+                except Exception:
+                    return []
+            else:
+                return []
 
         normalized_sims = np.clip((sims + 1.0) / 2.0, 0.0, 1.0) if np.min(sims) < 0 else np.clip(sims, 0.0, 1.0)
         top_indices = np.argsort(normalized_sims)[::-1][:top_k]

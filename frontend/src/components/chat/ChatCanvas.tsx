@@ -157,6 +157,7 @@ export const ChatCanvas: React.FC<ChatCanvasProps> = ({
                 message={m}
                 onSelectCitation={onSelectCitation}
                 onOpenActionModal={onOpenActionModal}
+                onSelectPrompt={onSendMessage}
               />
             ))}
 

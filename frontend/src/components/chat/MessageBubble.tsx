@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AlertTriangle,
   ArrowRight,
+  Check,
   CheckCircle2,
   Clock,
+  Copy,
   ExternalLink,
   HelpCircle,
   Layers,
   Scale,
   ShieldCheck,
   Sparkles,
+  ThumbsDown,
+  ThumbsUp,
   Zap,
 } from 'lucide-react';
 import { ActionRequest, QueryResponse } from '../../types';
@@ -23,44 +27,61 @@ interface MessageBubbleProps {
   };
   onSelectCitation: (index: number) => void;
   onOpenActionModal: (action: ActionRequest) => void;
-  onOpenGapModal?: (gap: any) => void;
+  onSelectPrompt?: (text: string) => void;
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
   message,
   onSelectCitation,
   onOpenActionModal,
+  onSelectPrompt,
 }) => {
   const isUser = message.role === 'user';
   const details = message.responseDetails;
+  const [copied, setCopied] = useState(false);
+  const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(message.content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   if (isUser) {
     return (
       <div className="flex justify-end mb-6">
-        <div className="max-w-2xl bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-2xl rounded-tr-sm px-5 py-3.5 shadow-lg shadow-teal-900/30 border border-teal-400/30 text-sm leading-relaxed font-medium">
+        <div className="max-w-2xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-2xl rounded-tr-sm px-5 py-3.5 shadow-lg shadow-brand-900/30 border border-brand-400/30 text-sm leading-relaxed font-medium">
           {message.content}
         </div>
       </div>
     );
   }
 
+  const isGemini = details?.provider_used === 'gemini';
+
   return (
     <div className="flex gap-4 mb-8 group">
-      <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-teal-400 via-teal-500 to-emerald-400 flex items-center justify-center shrink-0 shadow-lg shadow-teal-500/20 text-slate-950 font-bold text-xs ring-2 ring-white/10">
-        <Sparkles className="h-4 w-4 text-slate-950" />
+      <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-500 via-indigo-500 to-emerald-400 flex items-center justify-center shrink-0 shadow-lg shadow-brand-500/20 text-dark-950 font-bold text-xs ring-2 ring-white/10">
+        <Sparkles className="h-4 w-4 text-dark-950" />
       </div>
 
       <div className="flex-1 max-w-4xl space-y-3.5">
         {details && (
           <div className="flex flex-wrap items-center gap-2 text-[11px]">
-            <div className="px-2.5 py-0.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-300 font-mono font-semibold flex items-center gap-1.5 shadow-sm">
-              <ShieldCheck className="h-3.5 w-3.5 text-teal-400" />
+            <div className="px-2.5 py-0.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-300 font-mono font-semibold flex items-center gap-1.5 shadow-sm">
+              <ShieldCheck className="h-3.5 w-3.5 text-brand-400" />
               <span>Confidence: {Math.round(details.confidence_score * 100)}%</span>
             </div>
 
-            <div className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300 font-medium flex items-center gap-1">
-              <span>Engine:</span>
-              <span className="text-white font-semibold capitalize">{details.strategy_used.replace('_', ' ')}</span>
+            <div
+              className={`px-2.5 py-0.5 rounded-full border text-[11px] font-medium flex items-center gap-1.5 ${
+                isGemini
+                  ? 'bg-gradient-to-r from-brand-500/15 via-indigo-500/15 to-emerald-500/15 border-brand-500/30 text-brand-300 font-semibold'
+                  : 'bg-white/5 border-white/10 text-slate-300'
+              }`}
+            >
+              <Sparkles className="h-3 w-3 text-brand-400" />
+              <span>{isGemini ? 'Google Gemini 2.5 • text-embedding-004' : 'Local Hybrid Engine'}</span>
             </div>
 
             <div className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-400 font-mono flex items-center gap-1">
@@ -70,7 +91,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
             <div className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-400 flex items-center gap-1">
               <Layers className="h-3 w-3 text-slate-400" />
-              <span>Space: {details.active_space}</span>
+              <span>Scope: {details.active_space}</span>
             </div>
           </div>
         )}
@@ -104,14 +125,14 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-teal-950/30 border border-teal-500/30 space-y-1">
-                <div className="text-[10px] uppercase font-bold text-teal-400 font-mono flex items-center gap-1">
+              <div className="p-3 rounded-xl bg-brand-950/30 border border-brand-500/30 space-y-1">
+                <div className="text-[10px] uppercase font-bold text-brand-400 font-mono flex items-center gap-1">
                   <span>Authoritative Active Policy</span>
                 </div>
                 <div className="text-white font-semibold text-xs">
                   {details.conflict_report.source_a} (v{details.conflict_report.version_a})
                 </div>
-                <div className="text-teal-200 text-[11px] leading-relaxed pt-1">
+                <div className="text-brand-200 text-[11px] leading-relaxed pt-1">
                   "{details.conflict_report.claim_a}"
                 </div>
               </div>
@@ -161,13 +182,13 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
 
         {details?.proposed_action && (
-          <div className="rounded-2xl border border-teal-500/40 bg-gradient-to-br from-teal-950/40 via-dark-900 to-teal-950/20 p-5 text-xs shadow-xl space-y-3">
+          <div className="rounded-2xl border border-brand-500/40 bg-gradient-to-br from-brand-950/40 via-dark-900 to-brand-950/20 p-5 text-xs shadow-xl space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-teal-300 font-bold text-sm">
-                <Zap className="h-4 w-4 text-teal-400" />
+              <div className="flex items-center gap-2 text-brand-300 font-bold text-sm">
+                <Zap className="h-4 w-4 text-brand-400" />
                 <span>Actionable Workflow Ready</span>
               </div>
-              <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/40 font-bold">
+              <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/40 font-bold">
                 HUMAN-IN-THE-LOOP APPROVAL
               </span>
             </div>
@@ -176,7 +197,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             </p>
             <button
               onClick={() => onOpenActionModal(details.proposed_action!)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-bold text-xs hover:from-teal-400 hover:to-emerald-400 transition-all shadow-glow-teal"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-500 text-dark-950 font-bold text-xs hover:from-brand-400 hover:to-emerald-400 transition-all shadow-glow-teal"
             >
               <span>Review & Execute Workflow</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -201,8 +222,43 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
         )}
 
-        <div className="bg-dark-850 border border-white/10 rounded-2xl rounded-tl-sm p-5 text-sm text-slate-100 leading-relaxed space-y-2 whitespace-pre-line shadow-lg font-sans">
+        <div className="relative bg-dark-850 border border-white/10 rounded-2xl rounded-tl-sm p-5 text-sm text-slate-100 leading-relaxed space-y-2 whitespace-pre-line shadow-lg font-sans">
           {message.content}
+
+          <div className="flex items-center justify-between pt-3 mt-3 border-t border-white/[0.06] text-slate-400 text-xs">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-dark-800 hover:text-white transition-colors text-[11px]"
+                title="Copy answer"
+              >
+                {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+                <span>{copied ? 'Copied' : 'Copy'}</span>
+              </button>
+              <button
+                onClick={() => setFeedback('up')}
+                className={`p-1 rounded-lg hover:bg-dark-800 transition-colors ${
+                  feedback === 'up' ? 'text-brand-400' : 'hover:text-white'
+                }`}
+                title="Helpful"
+              >
+                <ThumbsUp className="h-3 w-3" />
+              </button>
+              <button
+                onClick={() => setFeedback('down')}
+                className={`p-1 rounded-lg hover:bg-dark-800 transition-colors ${
+                  feedback === 'down' ? 'text-rose-400' : 'hover:text-white'
+                }`}
+                title="Unhelpful"
+              >
+                <ThumbsDown className="h-3 w-3" />
+              </button>
+            </div>
+
+            <span className="text-[10px] text-slate-500 font-mono">
+              {isGemini ? 'Google Gemini Grounded' : 'Enterprise Verified'}
+            </span>
+          </div>
         </div>
 
         {details?.citations && details.citations.length > 0 && (
@@ -215,15 +271,36 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                 <button
                   key={idx}
                   onClick={() => onSelectCitation(idx)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-dark-850 hover:bg-white/10 border border-white/10 hover:border-teal-500/40 text-xs text-slate-300 hover:text-white transition-all group shadow-sm"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-dark-850 hover:bg-white/10 border border-white/10 hover:border-brand-500/40 text-xs text-slate-300 hover:text-white transition-all group shadow-sm"
                 >
-                  <span className="font-mono font-bold text-teal-400">[{idx + 1}]</span>
+                  <span className="font-mono font-bold text-brand-400">[{idx + 1}]</span>
                   <span className="font-semibold">{c.document_title}</span>
                   <span className="text-slate-400 font-mono text-[10px]">P.{c.page_number}</span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-300 border border-teal-500/20 font-bold">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-brand-500/10 text-brand-300 border border-brand-500/20 font-bold">
                     {Math.round(c.composite_score * 100)}%
                   </span>
-                  <ExternalLink className="h-3 w-3 text-slate-500 group-hover:text-teal-400 ml-0.5" />
+                  <ExternalLink className="h-3 w-3 text-slate-500 group-hover:text-brand-400 ml-0.5" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {details?.suggested_followups && details.suggested_followups.length > 0 && (
+          <div className="pt-2 space-y-2">
+            <div className="text-[11px] font-bold text-slate-400 flex items-center gap-1.5 uppercase tracking-wider">
+              <Sparkles className="h-3 w-3 text-brand-400" />
+              <span>Suggested Follow-Up Inquiries:</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {details.suggested_followups.map((q, i) => (
+                <button
+                  key={i}
+                  onClick={() => onSelectPrompt?.(q)}
+                  className="px-3 py-1.5 rounded-xl bg-dark-900/90 hover:bg-dark-850 border border-brand-500/30 hover:border-brand-500/60 text-xs text-brand-300 hover:text-white transition-all flex items-center gap-1.5 shadow-sm group text-left"
+                >
+                  <span>{q}</span>
+                  <ArrowRight className="h-3 w-3 text-brand-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
                 </button>
               ))}
             </div>

@@ -33,6 +33,22 @@ class QueryResponse(BaseModel):
     retrieval_latency_ms: float
     total_latency_ms: float
     active_space: str
+    provider_used: str = "local"
+    suggested_followups: List[str] = []
+
+class GeminiConfigRequest(BaseModel):
+    api_key: str
+    model: Optional[str] = "gemini-2.5-flash"
+
+class GeminiConfigResponse(BaseModel):
+    configured: bool
+    active_provider: str
+    model: str
+    embedding_model: str
+    has_api_key: bool
+    total_indexed_chunks: int
+    gemini_vectors_active: bool
+
 
 class DocumentCreateRequest(BaseModel):
     title: str

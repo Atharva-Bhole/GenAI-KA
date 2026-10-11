@@ -8,8 +8,9 @@ import { KnowledgeGraphViewer } from './components/graph/KnowledgeGraphViewer';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
 import { ProvenanceDrawer } from './components/provenance/ProvenanceDrawer';
-import { fetchSpaces, sendQuery } from './services/api';
-import { ActionRequest, Citation, KnowledgeSpace, QueryResponse } from './types';
+import { GeminiConfigModal } from './components/settings/GeminiConfigModal';
+import { fetchGeminiStatus, fetchSpaces, sendQuery } from './services/api';
+import { ActionRequest, Citation, GeminiConfigStatus, KnowledgeSpace, QueryResponse } from './types';
 
 interface Message {
   id: string;
@@ -34,6 +35,8 @@ export function App() {
   const [selectedCitationIndex, setSelectedCitationIndex] = useState<number | null>(null);
 
   const [activeAction, setActiveAction] = useState<ActionRequest | null>(null);
+  const [geminiStatus, setGeminiStatus] = useState<GeminiConfigStatus | null>(null);
+  const [isGeminiModalOpen, setIsGeminiModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchSpaces()
@@ -42,6 +45,10 @@ export function App() {
         if (data.length > 0) setActiveSpace(data[0].id);
       })
       .catch((err) => console.error('Failed to load spaces', err));
+
+    fetchGeminiStatus()
+      .then((status) => setGeminiStatus(status))
+      .catch((err) => console.error('Failed to load Gemini status', err));
   }, []);
 
   const handleSendMessage = async (queryText: string) => {
@@ -54,6 +61,11 @@ export function App() {
     setMessages((prev) => [...prev, userMsg]);
     setIsLoading(true);
 
+    const conversationHistory = messages.slice(-4).map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
+
     try {
       const response = await sendQuery({
         query: queryText,
@@ -61,6 +73,7 @@ export function App() {
         research_mode: researchMode,
         strategy: strategy,
         user_role: userRole,
+        conversation_history: conversationHistory,
       });
 
       const assistantMsg: Message = {
@@ -96,7 +109,7 @@ export function App() {
   const currentSpaceObj = spaces.find((s) => s.id === activeSpace) || { name: 'All Knowledge' };
 
   return (
-    <div className="flex h-screen w-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
+    <div className="flex h-screen w-screen bg-dark-950 text-slate-100 overflow-hidden font-sans">
       <Sidebar
         currentTab={currentTab}
         onSelectTab={(tab) => setCurrentTab(tab as any)}
@@ -123,6 +136,8 @@ export function App() {
           citationsCount={currentCitations.length}
           onToggleDrawer={() => setDrawerOpen(!drawerOpen)}
           drawerOpen={drawerOpen}
+          geminiStatus={geminiStatus}
+          onOpenGeminiModal={() => setIsGeminiModalOpen(true)}
         />
 
         <main className="flex-1 overflow-hidden relative">
@@ -157,6 +172,13 @@ export function App() {
         action={activeAction}
         onClose={() => setActiveAction(null)}
         onSuccess={() => {}}
+      />
+
+      <GeminiConfigModal
+        isOpen={isGeminiModalOpen}
+        onClose={() => setIsGeminiModalOpen(false)}
+        status={geminiStatus}
+        onStatusUpdated={setGeminiStatus}
       />
     </div>
   );

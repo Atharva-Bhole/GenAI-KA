@@ -74,6 +74,18 @@ export interface QueryResponse {
   retrieval_latency_ms: number;
   total_latency_ms: number;
   active_space: string;
+  provider_used?: string;
+  suggested_followups?: string[];
+}
+
+export interface GeminiConfigStatus {
+  configured: boolean;
+  active_provider: string;
+  model: string;
+  embedding_model: string;
+  has_api_key: boolean;
+  total_indexed_chunks: number;
+  gemini_vectors_active: boolean;
 }
 
 export interface Document {

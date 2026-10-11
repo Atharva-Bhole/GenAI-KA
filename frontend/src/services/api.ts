@@ -2,6 +2,7 @@ import type {
   AnalyticsStats,
   BenchmarkRunResponse,
   Document,
+  GeminiConfigStatus,
   KnowledgeGapRecord,
   KnowledgeGraphData,
   KnowledgeSpace,
@@ -17,6 +18,7 @@ export async function sendQuery(payload: {
   strategy?: string;
   user_role?: string;
   user_id?: string;
+  conversation_history?: Array<{ role: string; content: string }>;
 }): Promise<QueryResponse> {
   const res = await fetch(`${API_BASE}/chat/query`, {
     method: 'POST',
@@ -27,6 +29,33 @@ export async function sendQuery(payload: {
     const err = await res.json().catch(() => ({ detail: 'Query failed' }));
     throw new Error(err.detail || 'Network error');
   }
+  return res.json();
+}
+
+export async function fetchGeminiStatus(): Promise<GeminiConfigStatus> {
+  const res = await fetch(`${API_BASE}/config/gemini`);
+  if (!res.ok) throw new Error('Failed to fetch Gemini status');
+  return res.json();
+}
+
+export async function configureGemini(apiKey: string, model = 'gemini-2.5-flash'): Promise<GeminiConfigStatus> {
+  const res = await fetch(`${API_BASE}/config/gemini`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ api_key: apiKey, model }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Configuration failed' }));
+    throw new Error(err.detail || 'Gemini activation failed');
+  }
+  return res.json();
+}
+
+export async function disconnectGemini(): Promise<GeminiConfigStatus> {
+  const res = await fetch(`${API_BASE}/config/gemini/disconnect`, {
+    method: 'POST',
+  });
+  if (!res.ok) throw new Error('Failed to disconnect Gemini');
   return res.json();
 }
 
