@@ -5,6 +5,7 @@ import {
   Cpu,
   Layers,
   SlidersHorizontal,
+  Sparkles,
 } from 'lucide-react';
 import { KnowledgeSpace } from '../../types';
 
@@ -34,17 +35,17 @@ export const Header: React.FC<HeaderProps> = ({
   drawerOpen,
 }) => {
   return (
-    <header className="h-14 border-b border-slate-800 bg-slate-900/60 backdrop-blur px-5 flex items-center justify-between select-none">
-      <div className="flex items-center space-x-2 text-xs">
-        <span className="text-slate-400 font-medium flex items-center gap-1.5">
+    <header className="h-16 border-b border-white/5 bg-dark-900/70 backdrop-blur-md px-6 flex items-center justify-between select-none relative z-20">
+      <div className="flex items-center space-x-3 text-xs">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 font-medium">
           <Layers className="h-3.5 w-3.5 text-teal-400" />
-          Space
-        </span>
-        <ChevronRight className="h-3 w-3 text-slate-600" />
+          <span>Knowledge Space</span>
+        </div>
+        <ChevronRight className="h-3.5 w-3.5 text-slate-600" />
         <select
           value={activeSpace}
           onChange={(e) => onSelectSpace(e.target.value)}
-          className="bg-slate-800 text-slate-100 font-medium px-2.5 py-1 rounded-md border border-slate-700 outline-none text-xs hover:border-slate-600 cursor-pointer"
+          className="bg-dark-850 text-white font-medium px-3 py-1.5 rounded-lg border border-white/10 outline-none text-xs hover:border-teal-500/40 cursor-pointer shadow-inner-light transition-colors"
         >
           {spaces.map(s => (
             <option key={s.id} value={s.id}>
@@ -54,27 +55,27 @@ export const Header: React.FC<HeaderProps> = ({
         </select>
       </div>
 
-      <div className="flex items-center space-x-3">
-        <div className="flex items-center bg-slate-800/80 border border-slate-700 rounded-lg p-0.5 text-xs">
-          <span className="text-[11px] text-slate-400 px-2 flex items-center gap-1">
-            <Cpu className="h-3 w-3 text-slate-400" />
-            Engine:
+      <div className="flex items-center space-x-3.5">
+        <div className="flex items-center bg-dark-950/80 border border-white/10 rounded-xl p-1 text-xs shadow-inner-light">
+          <span className="text-[11px] text-slate-400 px-2.5 flex items-center gap-1.5 font-medium">
+            <Cpu className="h-3.5 w-3.5 text-slate-400" />
+            Strategy:
           </span>
           <button
             onClick={() => onChangeStrategy('adaptive')}
-            className={`px-2 py-1 rounded text-[11px] font-medium transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${
               strategy === 'adaptive'
-                ? 'bg-teal-500 text-slate-950 font-semibold shadow-sm'
-                : 'text-slate-300 hover:text-white'
+                ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 shadow-glow-teal font-bold'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             Adaptive Intelligence
           </button>
           <button
             onClick={() => onChangeStrategy('hybrid_rag')}
-            className={`px-2 py-1 rounded text-[11px] font-medium transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
               strategy === 'hybrid_rag'
-                ? 'bg-slate-700 text-white font-semibold'
+                ? 'bg-white/15 text-white font-semibold shadow-inner-light'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -82,9 +83,9 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
           <button
             onClick={() => onChangeStrategy('naive_rag')}
-            className={`px-2 py-1 rounded text-[11px] font-medium transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
               strategy === 'naive_rag'
-                ? 'bg-slate-700 text-white font-semibold'
+                ? 'bg-white/15 text-white font-semibold shadow-inner-light'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -94,31 +95,31 @@ export const Header: React.FC<HeaderProps> = ({
 
         <button
           onClick={() => onToggleResearchMode(!researchMode)}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all ${
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
             researchMode
-              ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-300 shadow-sm shadow-indigo-500/10'
-              : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
+              ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300 shadow-glow-indigo'
+              : 'bg-dark-850 border-white/10 text-slate-400 hover:text-slate-200 hover:border-white/20'
           }`}
         >
-          <Compass className={`h-3.5 w-3.5 ${researchMode ? 'text-indigo-400 animate-spin-slow' : 'text-slate-400'}`} />
+          <Compass className={`h-4 w-4 ${researchMode ? 'text-indigo-400 animate-spin-slow' : 'text-slate-400'}`} />
           <span>Research Mode</span>
-          <span className={`text-[10px] px-1 rounded ${researchMode ? 'bg-indigo-500/20 text-indigo-300' : 'bg-slate-700 text-slate-400'}`}>
+          <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-mono ${researchMode ? 'bg-indigo-500/30 text-indigo-200 font-bold' : 'bg-white/5 text-slate-400'}`}>
             {researchMode ? 'ON' : 'OFF'}
           </span>
         </button>
 
         <button
           onClick={onToggleDrawer}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
             drawerOpen
-              ? 'bg-teal-500/15 border-teal-500/40 text-teal-300'
-              : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
+              ? 'bg-teal-500/20 border-teal-500/50 text-teal-300 shadow-glow-teal'
+              : 'bg-dark-850 border-white/10 text-slate-300 hover:text-white hover:border-white/20'
           }`}
         >
-          <SlidersHorizontal className="h-3.5 w-3.5" />
+          <SlidersHorizontal className="h-3.5 w-3.5 text-teal-400" />
           <span>Evidence Sources</span>
           {citationsCount > 0 && (
-            <span className="h-4 min-w-4 px-1 rounded-full bg-teal-500 text-slate-950 font-bold text-[10px] flex items-center justify-center">
+            <span className="h-4 min-w-4 px-1.5 rounded-full bg-teal-400 text-slate-950 font-black text-[10px] flex items-center justify-center shadow-sm">
               {citationsCount}
             </span>
           )}

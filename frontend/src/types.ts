@@ -158,3 +158,4 @@ export interface AnalyticsStats {
   gaps_detected: number;
   recent_logs: any[];
 }
+

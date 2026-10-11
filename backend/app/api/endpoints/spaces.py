@@ -16,3 +16,4 @@ def create_space(space: KnowledgeSpace):
         space.id = f"space-{uuid.uuid4().hex[:6]}"
     db.insert_space(space)
     return space
+

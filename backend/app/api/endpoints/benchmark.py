@@ -7,3 +7,4 @@ router = APIRouter()
 @router.post("/run", response_model=BenchmarkRunResponse)
 def run_benchmark():
     return evaluator.run_evaluation()
+
